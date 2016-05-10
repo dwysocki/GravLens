@@ -18,7 +18,7 @@ def flatten(potential, R, D, θ, *args, **kwargs):
         def potential_(s):
             return potential(r(s, d[i]), *args, **kwargs)
 
-        Φ[i] = 2*quad(potential_, 0, s_max[i])
+        Φ[i] = 2*quad(potential_, 0, s_max[i])[0]
 
     return Φ
 

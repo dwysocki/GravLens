@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from scipy.constants import parsec, kilo, mega
+from scipy.constants import degree, parsec, kilo, mega
 from astropy.constants import M_sun
 
 
@@ -13,11 +13,22 @@ def main():
     R = 2.2
     D = 54
     M = 1.2e15
+    θmax = np.arctan2(R, D)
+    θ = np.linspace(0, θmax, 1000)
+
+    Φ2D = potential.flatten(potential.dehnen3D,
+                            R, D, θ,
+                            γ=1, M=M, a=1)
+
+    plt.plot(θ/degree, Φ2D)
+    plt.show()
+
+    return
 
     r = np.linspace(0, R, 1000)
     a = 1
 
-    Φ1 = potential.dehnen3D(r, γ=1, M=M, a=a)
+    Φ1   = potential.dehnen3D(r, γ=1, M=M, a=a)
     Φ1_5 = potential.dehnen3D(r, γ=1.5, M=M, a=a)
     Φ2_5 = potential.dehnen3D(r, γ=2.5, M=M, a=a)
 
