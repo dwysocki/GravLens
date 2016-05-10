@@ -15,12 +15,17 @@ def main():
     M = 1.2e15
     θmax = np.arctan2(R, D)
     θ = np.linspace(0, θmax, 1000)
+    dθ = θ[1] - θ[0]
 
     Φ2D = potential.flatten(potential.dehnen3D,
                             R, D, θ,
                             γ=1, M=M, a=1)
+    diffΦ2D = np.diff(Φ2D) / dθ
 
     plt.plot(θ/degree, Φ2D)
+    plt.show()
+
+    plt.plot(θ[1:]/degree, diffΦ2D)
     plt.show()
 
     return
