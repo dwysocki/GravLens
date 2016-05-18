@@ -102,12 +102,12 @@ def main():
     # Plot potential and its derivative.
     fig, ax_potential = plt.subplots()
 
-    ax_potential.plot(θ_2/arcmin, Φ2D2, "k-")
+    ax_potential.plot(θ2/arcmin, Φ2D2, "k-")
 
     ax_diff_potential = ax_potential.twinx()
-    ax_diff_potential.plot(θ_2[:-1]/arcmin, diffΦ2D2*arcmin, "r--")
+    ax_diff_potential.plot(θ2[:-1]/arcmin, diffΦ2D2*arcmin, "r--")
 
-    ax_potential.set_xlabel(r"$\tilde\theta$ [arcmin]")
+    ax_potential.set_xlabel(r"$\theta$ [arcmin]")
     ax_potential.set_ylabel(r"$\Phi_{\rm 2D}$ [Mpc$^3$ s$^{-2}$]")
     ax_diff_potential.set_ylabel(
         r"$\Phi_{\rm 2D}'$ [Mpc$^3$ s$^{-2}$ arcmin$^{-1}$]")
@@ -120,14 +120,14 @@ def main():
     # Plot image angles over the equation that finds them.
     fig, ax = plt.subplots()
 
-    ax.plot(θ_2[:-1]/arcmin, eqn/arcmin)
+    ax.plot(θ2[:-1]/arcmin, eqn/arcmin)
 
     ax.axhline(0, color="black", linestyle="--")
 
-    for θ_ in angles + θ_S:
-        ax.axvline(θ_/arcmin, color="red", linestyle="--")
+    for θ in angles:
+        ax.axvline(θ/arcmin, color="red", linestyle="--")
 
-    ax.set_xlabel(r"$\tilde\theta$ [arcmin]")
+    ax.set_xlabel(r"$\theta$ [arcmin]")
     ax.set_ylabel(r"Equation [arcmin]")
 
     fig.savefig(path.join(output, "image-angle-equation.pdf"))
@@ -135,46 +135,8 @@ def main():
     plt.close(fig)
     del fig, ax
 
-    return
 
 
-    plt.plot(θ/degree, Φ2D)
-    plt.show()
-
-    plt.plot(θ[1:]/degree, diffΦ2D)
-    plt.show()
-
-    return
-
-    r = np.linspace(0, R, 1000)
-    a = 1
-
-    Φ1   = potential.dehnen3D(r, γ=1, M=M, a=a)
-    Φ1_5 = potential.dehnen3D(r, γ=1.5, M=M, a=a)
-    Φ2_5 = potential.dehnen3D(r, γ=2.5, M=M, a=a)
-
-    plt.plot(r, -Φ1)
-    plt.plot(r, -Φ1_5)
-    plt.plot(r, -Φ2_5)
-    plt.loglog()
-    plt.show()
-
-    return
-
-    dₒₗ = dₗₛ = ω = 1
-    Φ2D = potential.zero2D
-
-    θx = θy = np.arange(-np.pi/4, np.pi/4, 0.01)
-    θX, θY = np.meshgrid(θx, θy)
-
-    Δφ = np.array([
-        [lens.phase_delay(np.array([θx_, θy_]), ω, dₒₗ, dₗₛ, Φ2D)
-         for θy_ in θy]
-        for θx_ in θx
-    ])
-
-    plt.contour(θX, θY, Δφ)
-    plt.show()
 
 if __name__ == "__main__":
     exit(main())
