@@ -2,8 +2,9 @@
 Gravitational potential equations.
 """
 import numpy as np
-from scipy.constants import G
 from scipy.integrate import quad
+
+from constants import G
 
 
 def flatten(potential, R, D, θ, *args, **kwargs):

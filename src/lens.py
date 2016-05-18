@@ -4,8 +4,8 @@ Lensing equations.
 
 import numpy as np
 from numpy import linalg as la
-from scipy.constants import c, e, electron_mass, epsilon_0, mu_0
 
+from constants import c, e, mₑ, mₚ, ε_0, μ_0
 from numeric import arr_roots
 
 
@@ -14,10 +14,7 @@ def angfreq_plasma(nₑ):
     Calculates the angular frequency of a plasma, `ωₚ`, with the given number
     density of electrons, `nₑ`.
     """
-    return np.sqrt(
-        (nₑ * e**2) /
-        (epsilon_0 * electron_mass)
-    )
+    return np.sqrt((nₑ * e**2) / (ε_0 * mₑ))
 
 
 def permittivity_plasma(ωₚ, ωₗ):
@@ -50,7 +47,7 @@ def n_plasma(ωₚ, ωₗ):
     Calculates the plasma index of refraction, `n`, for a given plasma
     frequency, `ωₚ`, and light frequency, `ωₗ`.
     """
-    μ = mu_0
+    μ = μ_0
     ε = permittivity_plasma(ωₚ, ωₗ)
     cₚ = speed_of_light_medium(μ, ε)
 
@@ -62,7 +59,7 @@ def angle_eqn(Φ2D, diffΦ2D, η, D_L, D_S, θ_, θ_S):
         (2*η / c**2)
       * (1/(D_L * np.cos(θ_S)) - 1/D_S)
       * diffΦ2D
-      - θ_[1:-1]
+      - θ_[:-1]
     )
 
 
@@ -71,7 +68,7 @@ def incident_angles(Φ2D, diffΦ2D, η, D_L, D_S, θ_, θ_S):
 
     roots = arr_roots(eqn)
 
-    return θ_[1:-2][roots] - θ_S
+    return θ_[1:-1][roots] - θ_S
 
 
 def phase_delay(θ, ω, dₒₗ, dₗₛ, Φ2D):

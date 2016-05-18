@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from scipy.constants import degree, parsec, kilo, mega
-from astropy.constants import M_sun
+from scipy.constants import degree
 
 
 import lens
@@ -12,27 +11,24 @@ from util import mirror
 def main():
     R = 2.2
     D_L = 54
-    D_S = 4*D_L
+    D_S = 10*D_L
     M = 1.2e15
 
     θmax = np.arctan2(R, D_L)
     θ = np.linspace(0, θmax, 1000)
     dθ = θ[1] - θ[0]
 
-    print(θmax)
+    θ_S = θmax / 3
 
-    θ_S = 0
-
-    θ2 = mirror(θ)
+    θ2 = mirror(θ, negate=True)
     θ_2 = θ2 + θ_S
 
     Φ2D = potential.flatten(potential.dehnen3D,
                             R, D_L, θ,
-                            γ=1, M=M, a=10000)
+                            γ=1, M=M, a=1e-10)
     Φ2D2 = mirror(Φ2D)
 
-    diffΦ2D = np.diff(Φ2D) / dθ
-    diffΦ2D2 = mirror(diffΦ2D)
+    diffΦ2D2 = np.diff(Φ2D2) / dθ
 
     ωₚ = None
     ωₗ = None
@@ -45,18 +41,23 @@ def main():
 
     ax1.plot(θ_2, Φ2D2, "k-")
 
+
     ax2 = ax1.twinx()
 
-    ax2.plot(θ_2[1:-1], diffΦ2D2, "r--")
+    ax2.plot(θ_2[:-1], diffΦ2D2, "r--")
 
-#    ax.plot(θ_2[1:-1], eqn)
 
-#    for θ_ in angles + θ_S:
-#        ax.axvline(θ_)
+    fig, ax = plt.subplots()
 
-    plt.show()
+    ax.plot(θ_2[:-1], eqn)
+
+    for θ_ in angles + θ_S:
+        ax.axvline(θ_, color="red", linestyle="--")
 
     print(angles)
+    plt.show()
+
+
     return
 
 
