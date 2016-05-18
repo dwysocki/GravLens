@@ -1,31 +1,82 @@
+#!/usr/bin/env python3
+"""
+Main interface.
+"""
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from scipy.constants import degree
 
+from argparse import ArgumentParser
 
 import lens
 import potential
 from util import mirror
 
+
+def get_args():
+    parser = ArgumentParser(prog="GravLens")
+
+    io = parser.add_argument_group("IO")
+    val = parser.add_argument_group("Values")
+
+    io.add_argument("-o", "--output",
+        required=True,
+        help="Output directory.")
+
+    val.add_argument("--radius", type=float,
+        default=2.2,
+        help="Radius of galaxy cluster in Mpc (default 2.2)")
+    val.add_argument("--dist-lens", type=float,
+        default=54.0,
+        help="Distance to galaxy cluster in Mpc (default 54.0)")
+    val.add_argument("--dist-source", type=float,
+        default=10.0,
+        help="Distance to source in units of distance to lens (default 10.0)")
+    val.add_argument("--angle-source", type=float,
+        default=10.0,
+        help="Angle between source and lens in units of inverse angular "
+             "radius of lens (default 10.0)")
+    val.add_argument("--mass", type=float,
+        default=1.2e15,
+        help="Mass of galaxy cluster in Msun (default 1.2e15)")
+    val.add_argument("--profile-index", type=float,
+        default=1.0,
+        help="Index on mass profile, i.e. 'γ' (default 1.0)")
+    val.add_argument("--scaling-radius", type=float,
+        default=1e-10,
+        help="Scaling radius on mass profile, i.e. 'a' (default 1e-10)")
+
+    args = parser.parse_args()
+
+    args.dist_source *= args.dist_lens
+
+    return args
+
+
 def main():
-    R = 2.2
-    D_L = 54
-    D_S = 10*D_L
-    M = 1.2e15
+    args = get_args()
+
+    R = args.radius
+    D_L = args.dist_lens
+    D_S = args.dist_source
+    M = args.mass
+
+    γ = args.profile_index
+    a = args.scaling_radius
 
     θmax = np.arctan2(R, D_L)
     θ = np.linspace(0, θmax, 1000)
     dθ = θ[1] - θ[0]
 
-    θ_S = θmax / 3
+    θ_S = θmax / args.angle_source
 
     θ2 = mirror(θ, negate=True)
     θ_2 = θ2 + θ_S
 
     Φ2D = potential.flatten(potential.dehnen3D,
                             R, D_L, θ,
-                            γ=1, M=M, a=1e-10)
+                            γ=γ, M=M, a=a)
     Φ2D2 = mirror(Φ2D)
 
     diffΦ2D2 = np.diff(Φ2D2) / dθ
