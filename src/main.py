@@ -5,13 +5,14 @@ Main interface.
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from scipy.constants import degree
+from scipy.constants import arcmin
 
 from argparse import ArgumentParser
+from os import path
 
 import lens
 import potential
-from util import mirror
+from util import make_sure_path_exists, mirror
 
 
 def get_args():
@@ -51,11 +52,15 @@ def get_args():
 
     args.dist_source *= args.dist_lens
 
+    make_sure_path_exists(args.output)
+
     return args
 
 
 def main():
     args = get_args()
+
+    output = args.output
 
     R = args.radius
     D_L = args.dist_lens
@@ -86,28 +91,49 @@ def main():
     η = 1
 
     eqn = lens.angle_eqn(Φ2D2, diffΦ2D2, η, D_L, D_S, θ_2, θ_S)
-    angles = lens.incident_angles(Φ2D2, diffΦ2D2, η, D_L, D_S, θ_2, θ_S)
-
-    fig, ax1 = plt.subplots()
-
-    ax1.plot(θ_2, Φ2D2, "k-")
-
-
-    ax2 = ax1.twinx()
-
-    ax2.plot(θ_2[:-1], diffΦ2D2, "r--")
-
-
-    fig, ax = plt.subplots()
-
-    ax.plot(θ_2[:-1], eqn)
-
-    for θ_ in angles + θ_S:
-        ax.axvline(θ_, color="red", linestyle="--")
+    angles = lens.image_angles(Φ2D2, diffΦ2D2, η, D_L, D_S, θ_2, θ_S)
 
     print(angles)
-    plt.show()
 
+    ##############
+    ## Plotting ##
+    ##############
+
+    # Plot potential and its derivative.
+    fig, ax_potential = plt.subplots()
+
+    ax_potential.plot(θ_2/arcmin, Φ2D2, "k-")
+
+    ax_diff_potential = ax_potential.twinx()
+    ax_diff_potential.plot(θ_2[:-1]/arcmin, diffΦ2D2*arcmin, "r--")
+
+    ax_potential.set_xlabel(r"$\tilde\theta$ [arcmin]")
+    ax_potential.set_ylabel(r"$\Phi_{\rm 2D}$ [Mpc$^3$ s$^{-2}$]")
+    ax_diff_potential.set_ylabel(
+        r"$\Phi_{\rm 2D}'$ [Mpc$^3$ s$^{-2}$ arcmin$^{-1}$]")
+
+    fig.savefig(path.join(output, "potential.pdf"))
+
+    plt.close(fig)
+    del fig, ax_potential, ax_diff_potential
+
+    # Plot image angles over the equation that finds them.
+    fig, ax = plt.subplots()
+
+    ax.plot(θ_2[:-1]/arcmin, eqn/arcmin)
+
+    ax.axhline(0, color="black", linestyle="--")
+
+    for θ_ in angles + θ_S:
+        ax.axvline(θ_/arcmin, color="red", linestyle="--")
+
+    ax.set_xlabel(r"$\tilde\theta$ [arcmin]")
+    ax.set_ylabel(r"Equation [arcmin]")
+
+    fig.savefig(path.join(output, "image-angle-equation.pdf"))
+
+    plt.close(fig)
+    del fig, ax
 
     return
 

@@ -63,7 +63,7 @@ def angle_eqn(Φ2D, diffΦ2D, η, D_L, D_S, θ_, θ_S):
     )
 
 
-def incident_angles(Φ2D, diffΦ2D, η, D_L, D_S, θ_, θ_S):
+def image_angles(Φ2D, diffΦ2D, η, D_L, D_S, θ_, θ_S):
     eqn = angle_eqn(Φ2D, diffΦ2D, η, D_L, D_S, θ_, θ_S)
 
     roots = arr_roots(eqn)
