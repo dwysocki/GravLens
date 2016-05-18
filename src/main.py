@@ -207,7 +207,7 @@ def main():
     for θ in EMangles[0]:
         axEM.axvline(θ/arcmin, color="red", linestyle="--")
 
-    axEM.set_xlabel(r"$\theta$ [arcmin]")
+    axGW.set_xlabel(r"$\theta$ [arcmin]")
     axEM.set_ylabel(r"EM Equation [arcmin]")
     axGW.set_ylabel(r"GW Equation [arcmin]")
 
