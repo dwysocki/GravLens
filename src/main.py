@@ -7,20 +7,58 @@ from astropy.constants import M_sun
 
 import lens
 import potential
-
+from util import mirror
 
 def main():
     R = 2.2
-    D = 54
+    D_L = 54
+    D_S = 4*D_L
     M = 1.2e15
-    θmax = np.arctan2(R, D)
+
+    θmax = np.arctan2(R, D_L)
     θ = np.linspace(0, θmax, 1000)
     dθ = θ[1] - θ[0]
 
+    print(θmax)
+
+    θ_S = 0
+
+    θ2 = mirror(θ)
+    θ_2 = θ2 + θ_S
+
     Φ2D = potential.flatten(potential.dehnen3D,
-                            R, D, θ,
-                            γ=1, M=M, a=1)
+                            R, D_L, θ,
+                            γ=1, M=M, a=10000)
+    Φ2D2 = mirror(Φ2D)
+
     diffΦ2D = np.diff(Φ2D) / dθ
+    diffΦ2D2 = mirror(diffΦ2D)
+
+    ωₚ = None
+    ωₗ = None
+    η = 1
+
+    eqn = lens.angle_eqn(Φ2D2, diffΦ2D2, η, D_L, D_S, θ_2, θ_S)
+    angles = lens.incident_angles(Φ2D2, diffΦ2D2, η, D_L, D_S, θ_2, θ_S)
+
+    fig, ax1 = plt.subplots()
+
+    ax1.plot(θ_2, Φ2D2, "k-")
+
+    ax2 = ax1.twinx()
+
+    ax2.plot(θ_2[1:-1], diffΦ2D2, "r--")
+
+#    ax.plot(θ_2[1:-1], eqn)
+
+#    for θ_ in angles + θ_S:
+#        ax.axvline(θ_)
+
+    plt.show()
+
+    print(angles)
+    return
+
 
     plt.plot(θ/degree, Φ2D)
     plt.show()
