@@ -1,5 +1,13 @@
 """
-Unit definitions.
+Physical constant definitions.
+
+Unit convention is:
+
+  length  : mega parsec
+  mass    : solar mass
+  time    : second
+  charge  : coulomb
+  current : ampere
 """
 import scipy.constants as cnst
 from scipy.constants import kilo, mega

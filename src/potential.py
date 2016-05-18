@@ -31,14 +31,3 @@ def dehnen3D(r, *, γ, M, a):
     rest = 1 - (r / (r+a))**power
 
     return const * rest
-
-
-
-
-
-
-def zero2D(θ):
-    return 0
-
-def zero3D(x):
-    return 0

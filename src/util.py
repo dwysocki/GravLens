@@ -17,6 +17,16 @@ def mirror(X, negate=False):
     return np.concatenate((sign*X_rev, X))
 
 
+def mirrorlr(X, negate=False):
+    """
+    Given an array X = [x0, x1, x2, ...], returns a "mirrored" array,
+    [..., x2, x1, x0, x1, x2, ...].
+    """
+    sign = -1 if negate else +1
+    X_rev = np.fliplr(X[:,1:])
+    return np.hstack((sign*X_rev, X))
+
+
 def make_sure_path_exists(path):
     """
     Creates the supplied *path* if it does not exist.

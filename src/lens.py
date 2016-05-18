@@ -8,12 +8,16 @@ from numpy import linalg as la
 from constants import c, e, mₑ, mₚ, ε_0, μ_0
 from numeric import arr_roots
 
+def electron_number_density(ρ):
+    return ρ / (2 * mₚ)
 
-def angfreq_plasma(nₑ):
+
+def angfreq_plasma(ρ):
     """
     Calculates the angular frequency of a plasma, `ωₚ`, with the given number
     density of electrons, `nₑ`.
     """
+    nₑ = electron_number_density(ρ)
     return np.sqrt((nₑ * e**2) / (ε_0 * mₑ))
 
 
